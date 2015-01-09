@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="CustomerCreateDlg" widgetVar="CustomerCreateDialog" modal="true" resizable="false" appendTo="@(body)" header="Yeni bir müşteri oluştur" closeOnEscape="true">
+
+            <h:form id="CustomerCreateForm">
+
+                <h:panelGroup id="display" rendered="true">
+                    <p:panelGrid columns="2" columnClasses="column">
+
+                        <p:outputLabel value="Customer ID" for="CustomerId" />
+                        <p:inputText id="CustomerId" value="#{customerControler.customer.custId}" title="CutomerID" required="true" requiredMessage="Customer ID boş bırakılamaz..."/>
+
+                        <p:outputLabel value="First Name" for="firstname" />
+                        <p:inputText id="firstname" value="#{customerControler.customer.firstName}" title="First Name" size="30" maxlength="30"/>
+
+                        <p:outputLabel value="Last Name" for="lastname" />
+                        <p:inputText id="lastname" value="#{customerControler.customer.lastName}" title="Last name" size="30" maxlength="30"/>
+
+                        <p:outputLabel value="Email" for="email" />
+                        <p:inputText id="email" value="#{customerControler.customer.email}" title="Email" size="30" maxlength="30"/>
+
+                       
+
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{customerControler.saveCustomer()}" value="Save"  oncomplete="handleSubmit(xhr,status,args,CustomerCreateDialog);">
+                        <p:confirm header="Onayla" message="Emin misiniz?" icon="ui-icon-alert"/>
+                    </p:commandButton>
+
+                    <p:commandButton value="İptal" onclick="CustomerCreateDialog.hide()"/>
+                </h:panelGroup>
+
+            </h:form>
+
+        </p:dialog>
+
+    </ui:composition>
+
+</html>

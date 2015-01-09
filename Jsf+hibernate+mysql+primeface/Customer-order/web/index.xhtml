@@ -1,0 +1,160 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>JSF Hibernate CRUD Example</title>
+        <style>
+            tfoot{
+                text-align: center;
+            }
+            thead{
+                background-color: blue;
+                color: white;
+            }
+            td{
+                font-weight: bold;
+            }
+            .msg{
+                font-size: small;
+                color: blue;
+            }
+        </style>
+    </h:head>
+    <h:body>
+
+        <h:form id="form"  >
+            <p:growl id="msgs" showDetail="true" />
+
+            <p:dataTable id="data" var="customer" value="#{customerControler.customers}" paginator="true" rows="10" 
+                         editable="true" selectionMode="single" selection="#{customerControler.selectedcustomer}" 
+                         rowKey="#{customer.custId}" style="margin-bottom:20px" filteredValue="#{customerControler.filteredcustomers}" 
+                         resizableColumns="true" liveResize="true"
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15">
+                        
+                <p:ajax event="rowEdit" listener="#{customerControler.onRowEdit}" update=":form:msgs" />
+                <p:ajax event="rowEditCancel" listener="#{customerControler.onRowCancel}" update=":form:msgs" />
+
+                <p:column headerText="Customer Id" sortBy="custId" filterBy="custId">
+
+                    <h:outputText value="#{customer.custId}" />
+
+                </p:column>
+                <p:column headerText="First Name" sortBy="firstName" filterBy="firstName" >
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{customer.firstName}" /></f:facet>
+                        <f:facet name="input"><p:inputText  value="#{customer.firstName}" style="width:100%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                <p:column headerText="Last Name" sortBy="lastName" filterBy="lastName">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{customer.lastName}" /></f:facet>
+                        <f:facet name="input"><p:inputText  value="#{customer.lastName}" style="width:100%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>  
+                <p:column headerText="Email" sortBy="email" filterBy="email">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{customer.email}" /></f:facet>
+                        <f:facet name="input"><p:inputText  value="#{customer.email}" style="width:100%"/></f:facet>
+                    </p:cellEditor>
+                </p:column> 
+                <p:column headerText="Date of Birth" sortBy="dob" filterBy="dob">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{customer.dob}" /></f:facet>
+                        <f:facet name="input"><p:calendar value="#{customer.dob}" pattern="yyyy-MM-dd"/></f:facet>
+                    </p:cellEditor>
+                </p:column> 
+                <p:column style="width:32px">
+                    <p:rowEditor />
+                </p:column>
+
+
+                <f:facet name="footer">
+                    <p:commandButton process="data" update=":viewForm:CustomerDetail" icon="ui-icon-search" value="View" oncomplete="PF('CustomerViewDialog').show()" />
+                
+                    <p:commandButton process="data" update=":createForm:CustomerCreate" icon="ui-icon-search" value="Create" oncomplete="PF('CustomerCreateDialog').show()" />
+                
+                    <p:commandButton   actionListener="#{customerControler.deleteCustomer}"  value="Delete"  update="@form" />
+                </f:facet>
+ 
+            </p:dataTable>
+
+        </h:form>
+
+
+
+        <h:form id="viewForm">
+            <p:dialog header="Viewing Customer" widgetVar="CustomerViewDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="true" width="250" >
+
+                <p:outputPanel id="CustomerDetail" style="text-align:center;">
+
+                    <h:outputText value="Customer Id:" style="border-color: red" />
+                    <h:inputText value="#{customerControler.selectedcustomer.custId}" />
+
+                    <h:outputText value="First name" />
+                    <h:inputText value="#{customerControler.selectedcustomer.firstName}" />
+
+                    <h:outputText value="Last Name:" />
+                    <h:inputText value="#{customerControler.selectedcustomer.lastName}" />
+
+                    <h:outputText value="Email" />
+                    <h:inputText value="#{customerControler.selectedcustomer.email}" />
+
+                    <h:outputText value="Date of Birth" />
+                    <h:inputText value="#{customerControler.selectedcustomer.dob}" />
+
+                </p:outputPanel>
+
+            </p:dialog>
+        </h:form>
+
+        <h:form id="createForm">
+            <p:dialog header="Creating Customer"  widgetVar="CustomerCreateDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="true" width="250" >
+                <p:outputPanel id="CustomerCreate" >
+
+                    <h:outputLabel value="First name" />
+                    <h:inputText value="#{customerControler.customer.firstName}" />
+
+                    <h:outputLabel value="Last Name:" />
+                    <h:inputText value="#{customerControler.customer.lastName}" />
+
+                    <h:outputLabel value="Email" />
+                    <h:inputText value="#{customerControler.customer.email}" />
+
+                    <h:outputLabel value="Date of Birth" />
+                    <p:calendar value="#{customerControler.customer.dob}" pattern="yyyy-MM-dd"/>
+
+                </p:outputPanel>
+                <f:facet name="footer">
+                    <p:commandButton action="#{customerControler.saveCustomer}" value="Create" oncomplete="PF('CustomerCreateDialog').hide()" update=":form" />
+
+                </f:facet>
+            </p:dialog>            
+        </h:form>
+        <h:form id="deleteForm">
+            <p:dialog header="Deleting Customer" widgetVar="CustomerDeleteDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="true" width="250" >
+                <p:outputPanel id="CustomerDelete" style="text-align:center;">
+
+
+
+
+
+                </p:outputPanel>
+                <f:facet name="footer">
+                    <p:commandButton  oncomplete="PF('CustomerDeleteDialog').hide()"  value="Onayla" update=":form:msgs" />
+                </f:facet>
+                <f:facet name="footer">
+                    <p:commandButton   action="#{customerControler.deleteCustomer}" process=":form:data" oncomplete="PF('CustomerDeleteDialog').hide()"  icon="ui-icon-edit" value="İptal" update=":form" />
+                </f:facet>
+            </p:dialog>        
+        </h:form>
+
+
+        
+
+    </h:body>
+</html>

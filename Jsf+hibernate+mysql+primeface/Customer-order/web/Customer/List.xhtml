@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <h:form id="CustomerListForm">
+
+        <p:panel header="Customer List">
+            <p:contextMenu id="CustomerDataTableContextMenu" for="datalist">  
+                <p:menuitem value="Create" onclick="document.getElementById('CustomerListForm:createButton').click();" icon="ui-icon-plus"/>
+                <p:menuitem value="View" onclick="document.getElementById('CustomerListForm:viewButton').click();" icon="ui-icon-search"/>
+                <p:menuitem value="Edit" onclick="document.getElementById('CustomerListForm:editButton').click();" icon="ui-icon-pencil"/>
+                <p:menuitem value="Delete" onclick="document.getElementById('CustomerListForm:deleteButton').click();" icon="ui-icon-trash"/>
+                <p:separator/>
+
+            </p:contextMenu>
+            <p:dataTable id="datalist"
+                         value="Customers"
+                         
+                         rowKey="#{customerControler.customer.custId}"
+                         paginator="true"
+                         rows="10"
+                         rowsPerPageTemplate="10,20,30,40,50"
+                         selectionMode="single"
+                         selection="#{customerControler.customer.custId}">
+
+                <p:ajax event="rowSelect"   update=":CustomerListForm:createButton :CustomerListForm:viewButton :CustomerListForm:editButton :CustomerListForm:deleteButton :CustomerListForm:CustomerDataTableContextMenu" listener="#{customerController.resetParents}"/>
+                <p:ajax event="rowUnselect" update=":CustomerListForm:createButton :CustomerListForm:viewButton :CustomerListForm:editButton :CustomerListForm:deleteButton :CustomerListForm:CustomerDataTableContextMenu" listener="#{customerController.resetParents}"/>
+                <p:ajax event="rowDblselect" onsuccess="document.getElementById('CustomerListForm:viewButton').click();"/>
+
+                <p:column sortBy="#{customerControler.customer.custId}" filterBy="#{customerControler.customer.custId}">
+                    <f:facet name="header">
+                        <h:outputText value="Customer ID"/>
+                    </f:facet>
+                    <h:outputText value="Customer Id"/>
+                </p:column>
+
+
+                <p:column sortBy="#{customerControler.customer.firstName}" filterBy="#{customerControler.customer.firstName}">
+                    <f:facet name="header">
+                        <h:outputText value="First Name"/>
+                    </f:facet>
+                    <h:outputText value="First Name"/>
+                </p:column>
+
+
+                <p:column sortBy="#{customerControler.customer.lastName}" filterBy="#{customerControler.customer.lastName}">
+                    <f:facet name="header">
+                        <h:outputText value="Last Name"/>
+                    </f:facet>
+                    <h:outputText value="#{customerControler.customer.lastName}"/>
+                </p:column>
+
+
+
+
+
+                <p:column sortBy="#{customerControler.customer.email}" filterBy="#{customerControler.customer.email}">
+                    <f:facet name="header">
+                        <h:outputText value="EMail"/>
+                    </f:facet>
+                    <h:outputText value="#{customerControler.customer.email}"/>
+                </p:column>
+
+
+                <p:column sortBy="#{customerControler.customer.dob}" filterBy="#{customerControler.customer.dob}">
+                    <f:facet name="header">
+                        <h:outputText value="Date of Birth"/>
+                    </f:facet>
+                    <!-- <h:outputText value="#{item.state}"/> -->
+                    <p:calendar value="#{customerControler.customer.dob}" mode="popup" showOn="button"></p:calendar>
+                </p:column>
+
+                <!--
+                                    <p:column sortBy="#{item.phone}" filterBy="#{item.phone}">
+                                        <f:facet name="header">
+                                            <h:outputText value="#{myBundle.ListCustomerTitle_phone}"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.phone}"/>
+                                    </p:column>
+                -->
+                <!--
+                                    <p:column sortBy="#{item.fax}" filterBy="#{item.fax}">
+                                        <f:facet name="header">
+                                            <h:outputText value="#{myBundle.ListCustomerTitle_fax}"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.fax}"/>
+                                    </p:column>
+                -->
+                <!--
+                                    <p:column sortBy="#{item.email}" filterBy="#{item.email}">
+                                        <f:facet name="header">
+                                            <h:outputText value="#{myBundle.ListCustomerTitle_email}"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.email}"/>
+                                    </p:column>
+                -->
+                <!--
+                                    <p:column sortBy="#{item.creditLimit}" filterBy="#{item.creditLimit}">
+                                        <f:facet name="header">
+                                            <h:outputText value="#{myBundle.ListCustomerTitle_creditLimit}"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.creditLimit}"/>
+                                    </p:column>
+                -->
+                <!--
+                                    <p:column sortBy="#{item.discountCode.discountCode}" filterBy="#{item.discountCode.discountCode}">
+                                        <f:facet name="header">
+                                            <h:outputText value="#{myBundle.ListCustomerTitle_discountCode}"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.discountCode.discountCode}"/>
+                                    </p:column>
+                -->
+                <!--
+                                    <p:column sortBy="#{item.zip.zipCode}" filterBy="#{item.zip.zipCode}">
+                                        <f:facet name="header">
+                                            <h:outputText value="#{myBundle.ListCustomerTitle_zip}"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.zip.zipCode}"/>
+                                    </p:column>
+                -->
+
+            </p:dataTable>
+
+            <p:commandButton id="createButton"                             icon="ui-icon-plus"   value="Create" actionListener="#{customerControler.saveCustomer()}" update=":CustomerCreateForm" oncomplete="CustomerCreateDialog.show()"/>
+            <p:commandButton id="viewButton"   style="visibility: hidden;" icon="ui-icon-search" value="View" update=":CustomerViewForm" oncomplete="CustomerViewDialog.show()" disabled="true"/>
+            <p:commandButton id="editButton"   style="visibility: hidden;" icon="ui-icon-pencil" value="Edit" update=":CustomerEditForm" oncomplete="CustomerEditDialog.show()" disabled="true"/>
+            <p:commandButton id="deleteButton" style="visibility: hidden;" icon="ui-icon-trash"  value="Delete" actionListener="#{customerController.delete}" update=":growl,datalist" disabled="true">
+                <p:confirm header="Emin misiniz?" message="Silindi..." icon="ui-icon-alert"/>
+            </p:commandButton>
+
+        </p:panel>
+        <ui:include src="/confirmation.xhtml"/>
+    </h:form>
+
+</ui:composition>
